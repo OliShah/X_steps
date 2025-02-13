@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 import inspect
 
+
 def get_log_file_name():
     """
     Dynamically generates a log file name based on the caller's file name and current timestamp.
@@ -39,5 +40,5 @@ logging.basicConfig(
     level=logging.INFO,
 )
 
-if __name__ == "__main__":
-    logging.info("Logging has started.")
+# if __name__ == "__main__":
+#     logging.info("Logging has started.")
