@@ -70,15 +70,10 @@ def clone_to_csv(clone_file_path, ingestion_config, et=et):
     data = []
 
     for record in root.findall('Record'):
-        if record.get('type'):
-            child_elems={
-                'type': record.get('type'),
-                'start_date': record.get('startDate'),
-                'value': record.get('value')
-            }
-            data.append(child_elems)
-        
+        data.append(record.attrib)
+
     df = pd.DataFrame(data)
+    print(df.head())
     df.to_csv(ingestion_config.csv_file_path, index=False)
     logging.info('clone to csv complete')
 
@@ -87,4 +82,3 @@ if __name__ == "__main__":
     obj=DataIngestion()
     obj.initiate_data_ingestion()
 
-    
