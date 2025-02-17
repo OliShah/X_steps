@@ -57,8 +57,8 @@ class DataCleaner:
                 df = self.remove_cols(df, remove_cols=remove_cols)  # Replace 'column_to_remove' with actual column names
             logging.info("column remover is accessesible.")
 
-#           df.to_csv(self.clean_obj_path, index=False)
-#            logging.info(f"Cleaned data saved to {self.clean_obj_path}")
+            df.to_csv(self.clean_obj_path, index=False)
+            logging.info(f"Cleaned data saved to {self.clean_obj_path}")
             
             return df
 
@@ -68,14 +68,14 @@ class DataCleaner:
 
     def filter_col(self, df, filter):
 
-        if not isinstance(filter, list):
-            logging.error(f"Expected list for cols, got {type(filter).__name__}")
-            raise TypeError(f"Expected list for cols, got {type(filter).__name__}")
+        if not isinstance(filter, tuple):
+            logging.error(f"Expected tuple for filter, got {type(filter).__name__}")
+            raise TypeError(f"Expected tuple for filter, got {type(filter).__name__}")
         
         col, keyword_list = filter
         return df[df[col].isin(keyword_list)]
     
-    def remove_cols(self, df, cols):
+    def remove_cols(self, df, remove_cols):
         """
         Removes specified columns from the DataFrame.
 
@@ -88,11 +88,11 @@ class DataCleaner:
         """
 
         if not isinstance(cols, list):
-            logging.error(f"Expected list for cols, got {type(cols).__name__}")
-            raise TypeError(f"Expected list for cols, got {type(cols).__name__}")
+            logging.error(f"Expected list for cols, got {type(remove_cols).__name__}")
+            raise TypeError(f"Expected list for cols, got {type(remove_cols).__name__}")
     
         try:
-            df = df.drop(columns=cols)
+            df = df.drop(columns=remove_cols)
             logging.info(f"Columns {cols} removed from dataframe.")
             return df
         except KeyError as e:
@@ -103,8 +103,9 @@ if __name__ == '__main__':
     try:
         cleaning_obj = DataCleaner()
         filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
-        clean_data = cleaning_obj.initiate_data_cleaning(filter=filter)
-        #clean_data.to_csv(cleaning_obj.clean_obj_path)
+        cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
+        clean_data = cleaning_obj.initiate_data_cleaning(filter=filter, remove_cols=cols)
+        clean_data.to_csv(cleaning_obj.clean_obj_path)
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         raise
