@@ -17,24 +17,24 @@ def test_remove_col_with_type_error(data_cleaner, sample_df):
     remove_cols = 'A'
 
     with pytest.raises(TypeError):
-        data_cleaner.remove_cols(sample_df, cols=remove_cols)
+        data_cleaner.remove_cols(sample_df, remove_cols=remove_cols)
 
 def test_remove_nonexistent_col(data_cleaner, sample_df):
     remove_cols = ['C']
 
     with pytest.raises(KeyError):
-        data_cleaner.remove_cols(sample_df, cols=remove_cols)
+        data_cleaner.remove_cols(sample_df, remove_cols=remove_cols)
 
 def test_remove_more_than_one_cols(data_cleaner, sample_df):
     remove_cols = ['A', 'B']
-    removed_col_df = data_cleaner.remove_cols(sample_df, cols=remove_cols)
+    removed_col_df = data_cleaner.remove_cols(sample_df, remove_cols=remove_cols)
 
     expected_df = sample_df[[]]
     pd.testing.assert_frame_equal(removed_col_df, expected_df)
 
 def test_remove_cols(data_cleaner, sample_df):
     remove_cols = ['A']
-    removed_col_df = data_cleaner.remove_cols(sample_df, cols=remove_cols)
+    removed_col_df = data_cleaner.remove_cols(sample_df, remove_cols=remove_cols)
 
     expected_df = sample_df[['B']]
     pd.testing.assert_frame_equal(removed_col_df, expected_df)

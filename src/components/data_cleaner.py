@@ -54,7 +54,7 @@ class DataCleaner:
             logging.info("filter is accessible")
 
             if remove_cols is not None:
-                df = self.remove_cols(df, remove_cols=remove_cols)  # Replace 'column_to_remove' with actual column names
+                df = self.remove_cols(df, remove_cols=remove_cols) 
             logging.info("column remover is accessesible.")
 
             df.to_csv(self.clean_obj_path, index=False)
@@ -87,13 +87,13 @@ class DataCleaner:
         - DataFrame with specified columns removed.
         """
 
-        if not isinstance(cols, list):
-            logging.error(f"Expected list for cols, got {type(remove_cols).__name__}")
-            raise TypeError(f"Expected list for cols, got {type(remove_cols).__name__}")
+        if not isinstance(remove_cols, list):
+            logging.error(f"Expected list for remove_cols, got {type(remove_cols).__name__}")
+            raise TypeError(f"Expected list for remove_cols, got {type(remove_cols).__name__}")
     
         try:
             df = df.drop(columns=remove_cols)
-            logging.info(f"Columns {cols} removed from dataframe.")
+            logging.info(f"Columns {remove_cols} removed from dataframe.")
             return df
         except KeyError as e:
             logging.error(f"Error occurred while removing columns: {e}")
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     try:
         cleaning_obj = DataCleaner()
         filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
-        cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
+        remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
         clean_data = cleaning_obj.initiate_data_cleaning(filter=filter, remove_cols=cols)
         clean_data.to_csv(cleaning_obj.clean_obj_path)
     except Exception as e:
