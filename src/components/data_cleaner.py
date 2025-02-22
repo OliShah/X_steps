@@ -66,6 +66,47 @@ class DataCleaner:
             logging.error(f"Error occurred during data cleaning: {e}")
             raise e
 
+    def change_col_type(self, df, cols_and_types):
+        """
+        Changes dtype of specified columns from the DataFrame.
+
+        Parameters:
+        - df: The DataFrame in which columns are to be converted.
+        - cols_and_types: A list which contains one/more than one tuple [(col, type)] specifying cols and the type to convert to.
+
+        Returns:
+        - DataFrame with specified columns' in their new types.
+        """
+
+        if not isinstance(cols_and_types, list):
+            logging.error(f"Expected list for cols_and_types, got {type(cols_and_types).__name__}")
+            raise TypeError(f"Expected list for cols_and_types, got {type(cols_and_types).__name__}")
+        
+        if not all(isinstance(item, tuple) and len(item) == 2 for item in cols_and_types):
+            logging.error(f"Expected tuples of length 2 for cols_and_types, got {type(cols_and_types).__name__}")
+            raise TypeError(f"Expected tuples of length 2 in cols_and_types, got {type(cols_and_types).__name__}")
+    
+        try:
+            for item in cols_and_types :
+                col, col_type = item
+                
+                if col_type == "int":
+                    df[col] = df[col].astype(int)
+                elif col_type == "float":
+                    df[col] = df[col].astype(float)
+                elif col_type == "object":
+                    df[col] = df[col].astype(str)
+                elif col_type == "datetime64[ns]":
+                    df[col] = pd.to_datetime(df[col])
+                else:
+                    logging.warning(f"Unsupported type '{col_type}' for column '{col}'. Skipping.")
+        
+        except KeyError as e:
+            logging.error(f"Error changing column types: {e}")
+            raise 
+
+        return df
+
     def filter_col(self, df, filter):
 
         if not isinstance(filter, tuple):
@@ -102,10 +143,17 @@ class DataCleaner:
 if __name__ == '__main__':
     try:
         cleaning_obj = DataCleaner()
-        filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
-        remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
-        clean_data = cleaning_obj.initiate_data_cleaning(filter=filter, remove_cols=cols)
-        clean_data.to_csv(cleaning_obj.clean_obj_path)
+        # filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
+        # remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
+        # clean_data = cleaning_obj.initiate_data_cleaning(filter=filter, remove_cols=cols)
+        # clean_data.to_csv(cleaning_obj.clean_obj_path)
+
+        x = pd.DataFrame({
+            'A': ['1/01/2001']
+        })
+        x['A'] = pd.to_datetime(x['A'])
+        print(x['A'].dtype)
+
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         raise
