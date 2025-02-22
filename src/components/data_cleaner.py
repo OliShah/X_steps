@@ -30,7 +30,7 @@ class DataCleaner:
         self.data_path = data_path if data_path is not None else self.data_cleaning_config.data_path
         self.clean_obj_path = clean_obj_path if clean_obj_path is not None else self.data_cleaning_config.clean_obj_path
 
-    def initiate_data_cleaning(self, filter=None, remove_cols=None):
+    def initiate_data_cleaning(self, filter=None, remove_cols=None, cols_and_types=None):
         """
         Cleans data and optionally applies a filter based on a column and a list of keyword(s).
 
@@ -56,6 +56,9 @@ class DataCleaner:
             if remove_cols is not None:
                 df = self.remove_cols(df, remove_cols=remove_cols) 
             logging.info("column remover is accessesible.")
+
+            if cols_and_types is not None:
+                df = self.change_col_type(df=df, cols_and_types=cols_and_types)
 
             df.to_csv(self.clean_obj_path, index=False)
             logging.info(f"Cleaned data saved to {self.clean_obj_path}")
