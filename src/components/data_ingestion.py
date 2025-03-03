@@ -25,17 +25,31 @@ class DataIngestionConfig:
 # https://medium.com/@mouadenna/time-series-splitting-techniques-ensuring-accurate-model-validation-5a3146db3088
 
 class DataIngestion:
-    def __init__(self):
-        self.ingestion_config=DataIngestionConfig()
+    def __init__(self, raw_path=None, clone_path=None, csv_path=None):
+        self.ingestion_config = DataIngestionConfig(
+            clone_file_path=clone_path or os.getenv('CLONE_FILE_PATH'),
+            csv_file_path=csv_path or os.getenv('CSV_FILE_PATH'),
+            raw_file_path=raw_path or os.getenv('RAW_FILE_PATH')
+        )
+
+    def set_paths(self, raw_path=None, clone_path=None, csv_path=None):
+        """Allows dynamic updating of file paths."""
+        if raw_path:
+            self.ingestion_config.raw_file_path = raw_path
+        if clone_path:
+            self.ingestion_config.clone_file_path = clone_path
+        if csv_path:
+            self.ingestion_config.csv_file_path = csv_path
 
     def initiate_data_ingestion(self):
         logging.info("Data ingestion initiated")
 
         raw_file_path = self.ingestion_config.raw_file_path
-        clone_file_path = self.ingestion_config.clone_file_path
         logging.info(f"raw file path: {raw_file_path}")
-        csv_file_path = self.ingestion_config.csv_file_path
+        clone_file_path = self.ingestion_config.clone_file_path
         logging.info(f"Clone file path: {clone_file_path}")
+        csv_file_path = self.ingestion_config.csv_file_path
+        logging.info(f"csv file path: {csv_file_path}")
 
         if raw_file_path is None:
             raise ValueError("Raw file path is not set. Check the environment variable.")
@@ -45,8 +59,8 @@ class DataIngestion:
             clone_to_csv(clone_file_path, self.ingestion_config)
 
             return (
-                self.ingestion_config.raw_file_path,
-                self.ingestion_config.clone_file_path
+                clone_file_path,
+                csv_file_path
                 )
            
         except Exception as e:
@@ -79,5 +93,6 @@ def clone_to_csv(clone_file_path, ingestion_config, et=et):
 
 if __name__ == "__main__":
     obj=DataIngestion()
-    obj.initiate_data_ingestion()
-
+    clone, csv = obj.initiate_data_ingestion()
+    print(clone)
+    print(csv)
