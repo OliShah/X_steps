@@ -75,7 +75,7 @@ class DataCleaner:
 
         Parameters:
         - df: The DataFrame in which columns are to be converted.
-        - cols_and_types: A list which contains one/more than one tuple [(col, type)] specifying cols and the type to convert to.
+        - cols_and_types: A list which contains at least one tuple [(col, type)] specifying cols and the type to convert to.
 
         Returns:
         - DataFrame with specified columns' in their new types.
@@ -143,21 +143,16 @@ class DataCleaner:
             logging.error(f"Error occurred while removing columns: {e}")
             raise e
 
-if __name__ == '__main__':
-    try:
-        cleaning_obj = DataCleaner()
-        # filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
-        # remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
-        # clean_data = cleaning_obj.initiate_data_cleaning(filter=filter, remove_cols=cols)
-        # clean_data.to_csv(cleaning_obj.clean_obj_path)
+# if __name__ == '__main__':
+#     try:
+#         ingestion_obj = DataIngestion()
+#         cleaning_obj = DataCleaner()
+#         filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
+#         remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
+#         clean_data = cleaning_obj.initiate_data_cleaning(df=DataIngestion, filter=filter, remove_cols=cols)
+#         clean_data.to_csv(cleaning_obj.clean_obj_path)
 
-        x = pd.DataFrame({
-            'A': ['1/01/2001']
-        })
-        x['A'] = pd.to_datetime(x['A'])
-        print(x['A'].dtype)
-
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-        raise
+#     except Exception as e:
+#         logging.error(f"An error occurred: {e}")
+#         raise
 

@@ -11,13 +11,9 @@ def df_factory():
     return pd.DataFrame({
         'A': [1, 2, 3, 4],
         'B': ['foo', 'bar', 'foo', 'baz'],
-        #'C': ['1', '2', '3', '4'],
-        #'D': ['2025-12-20 11:53:32', '2018-10-22 11:53:32', '2018-12-20 11:53:32','2018-12-21 11:53:32'],
-        #'X': ['','','','']
     })
 
-
-# Type Conversion
+# Type Conversion-
 def test_change_col_nonstring_datetime(data_cleaner, df_factory):
     df_factory["C"] = [2001/11/1, 2002/2/2, 2003/3/2, 2004/4/4]
     
