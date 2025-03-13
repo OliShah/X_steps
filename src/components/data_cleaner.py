@@ -1,27 +1,19 @@
-# Create Data Cleaning Class
-# Acceptance Criteria:
-# Column removal method that allows user to specify columns to remove
-# Should accept a df or a csv as input from the data ingestion class
-# Create methods to clean the data based on data-scientists' parameters
-# The class should be resusable for different datasets, eg. weather
-# Saves cleaned dataframe to disk as a csv for debugging
-# Stores df as a variable to be passed on to preprocessor class
-
 import os
-import sys 
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.append('src')
 
 from pathlib import Path
 import pandas as pd
 from dataclasses import dataclass
-from logger import logging
+from src.logger import logging
+from src.components.data_ingestion import DataIngestion
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 @dataclass 
 class DataCleanerConfig:
-    data_path: Path = Path(r'C:\Users\olish\Documents\ml_projects\X_steps\artefacts') / 'csv.csv'
-    clean_obj_path: Path = Path(r'C:\Users\olish\Documents\ml_projects\X_steps\artefacts') / 'clean_data.csv'
+    data_path: str = os.getenv('CSV_FILE_PATH')
+    clean_obj_path: str = os.getenv('CLEAN_FILE_PATH')
     
 
 class DataCleaner:
@@ -143,16 +135,17 @@ class DataCleaner:
             logging.error(f"Error occurred while removing columns: {e}")
             raise e
 
-# if __name__ == '__main__':
-#     try:
-#         ingestion_obj = DataIngestion()
-#         cleaning_obj = DataCleaner()
-#         filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
-#         remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
-#         clean_data = cleaning_obj.initiate_data_cleaning(df=DataIngestion, filter=filter, remove_cols=cols)
-#         clean_data.to_csv(cleaning_obj.clean_obj_path)
+if __name__ == '__main__':
+    try:
+        ingestion_obj = DataIngestion()
+        ingestion_obj.initiate_data_ingestion()
+        cleaning_obj = DataCleaner()
+        filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
+        remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
+        clean_data = cleaning_obj.initiate_data_cleaning(filter=filter, remove_cols=remove_cols)
+        clean_data.to_csv(cleaning_obj.clean_obj_path)
 
-#     except Exception as e:
-#         logging.error(f"An error occurred: {e}")
-#         raise
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        raise
 
