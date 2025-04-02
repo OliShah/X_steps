@@ -10,3 +10,6 @@ pytest
 
 #data
 python-dotenv  
+
+#Testing
+pytest

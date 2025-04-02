@@ -10,8 +10,23 @@ def data_cleaner():
 def df_factory():
     return pd.DataFrame({
         'A': [1, 2, 3, 4],
-        'B': ['foo', 'bar', 'foo', 'baz'],
+        'B': ['foo', 'bar', 'foo', 'baz'],	
     })
+
+# Grouping Rows
+
+def test_group_rows(data_cleaner, df_factory):
+    df_factory["C"] = ['2001-11-1','2001-11-1', '2001-11-1', '2001-11-2']
+    df_factory["D"] = [5,6,7,8]
+
+    cols_and_types = [('C', 'datetime64[ns]')]
+    df = data_cleaner.change_col_type(df_factory, cols_and_types=cols_and_types)
+    
+    col= ('C')	
+    grouped_df = data_cleaner.group_rows(df, col=col)
+
+    assert grouped_df.iloc[0]['D'] == 18 
+    assert grouped_df.iloc[1]['D'] == 8 
 
 # Type Conversion-
 def test_change_col_nonstring_datetime(data_cleaner, df_factory):

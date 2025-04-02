@@ -22,7 +22,7 @@ class DataCleaner:
         self.data_path = data_path if data_path is not None else self.data_cleaning_config.data_path
         self.clean_obj_path = clean_obj_path if clean_obj_path is not None else self.data_cleaning_config.clean_obj_path
 
-    def initiate_data_cleaning(self, filter=None, remove_cols=None, cols_and_types=None):
+    def initiate_data_cleaning(self, filter=None, remove_cols=None, cols_and_types=None, group_col=None):
         """
         Cleans data and optionally applies a filter based on a column and a list of keyword(s).
 
@@ -52,6 +52,9 @@ class DataCleaner:
             if cols_and_types is not None:
                 df = self.change_col_type(df=df, cols_and_types=cols_and_types)
 
+            if group_col is not None:
+                df = self.group_rows(df,group_col=group_col)
+
             df.to_csv(self.clean_obj_path, index=False)
             logging.info(f"Cleaned data saved to {self.clean_obj_path}")
             
@@ -60,6 +63,32 @@ class DataCleaner:
         except Exception as e:
             logging.error(f"Error occurred during data cleaning: {e}")
             raise e
+
+    def group_rows(self, df, col):
+        """
+        Groups rows of a dataframe based on values of a given column
+
+        Parameters:
+        - df: The dataframe where the rows are to be grouped
+        - col: The column to be traversed for the same values
+
+        Returns:
+        - Dataframe with only unique values for the specified column 
+	- Will concatanate string cols and sum all numeric calls
+
+        """
+
+        if col not in df.columns:
+            logging.error(f"The column '{col}' does not exist in {df}.  Choose a column from the following: {list(df.columns)}")
+            raise KeyError(f"The '{col}'does not exist in {df}.  Choose a column from the following: {list(df.columns)}") 
+
+        try:
+            df = df.groupby(col, as_index=False).sum()
+        
+        except KeyError as e:
+            logging.error(f"Error in grouping rows {e}")
+
+        return df
 
     def change_col_type(self, df, cols_and_types):
         """
@@ -135,17 +164,17 @@ class DataCleaner:
             logging.error(f"Error occurred while removing columns: {e}")
             raise e
 
-if __name__ == '__main__':
-    try:
-        ingestion_obj = DataIngestion()
-        ingestion_obj.initiate_data_ingestion()
-        cleaning_obj = DataCleaner()
-        filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
-        remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
-        clean_data = cleaning_obj.initiate_data_cleaning(filter=filter, remove_cols=remove_cols)
-        clean_data.to_csv(cleaning_obj.clean_obj_path)
+#if __name__ == '__main__':
+#    try:
+#        ingestion_obj = DataIngestion()
+#        ingestion_obj.initiate_data_ingestion()
+#        cleaning_obj = DataCleaner()
+#        filter = ("type", ['HKQuantityTypeIdentifierStepCount'])
+#        remove_cols = ['type','sourceName','sourceVersion','device','unit','creationDate','endDate']
+#        clean_data = cleaning_obj.initiate_data_cleaning(filter=filter, remove_cols=remove_cols)
+#        clean_data.to_csv(cleaning_obj.clean_obj_path)
 
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-        raise
+#    except Exception as e:
+#        logging.error(f"An error occurred: {e}")
+#        raise
 
